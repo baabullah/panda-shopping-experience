@@ -97,6 +97,40 @@ body:has(.netflix-hero) {
   transform: translateY(0);
 }
 
+.netflix-search {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  z-index: 10;
+  width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 24px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.search-input::placeholder {
+  color: rgba(255,255,255,0.8);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.search-input:focus {
+  background: rgba(0,0,0,0.8);
+  border-color: rgba(255,255,255,0.5);
+  transform: scale(1.02);
+}
+
 .hero-gradient {
   position: absolute;
   top: 0;
@@ -417,6 +451,17 @@ body:has(.netflix-hero) {
   .hero-btn {
     padding: 10px 20px;
     font-size: 0.9rem;
+  }
+  
+  .netflix-search {
+    top: 20px;
+    right: 20px;
+    width: 250px;
+  }
+  
+  .search-input {
+    padding: 14px 20px;
+    font-size: 14px;
   }
   
   .netflix-carousel {

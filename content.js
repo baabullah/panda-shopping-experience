@@ -100,6 +100,20 @@ class AmazonNetflixTransformer {
     heroSection.scrollIntoView({ behavior: 'smooth' });
   }
 
+  setupSearchBox(heroSection) {
+    const searchInput = heroSection.querySelector('.search-input');
+    
+    searchInput.onkeypress = (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query) {
+          const currentDomain = window.location.hostname;
+          window.location.href = `https://${currentDomain}/s?k=${encodeURIComponent(query)}`;
+        }
+      }
+    };
+  }
+
   setupHeroImagePanning(heroSection) {
     heroSection.addEventListener('mousemove', (e) => {
       const rect = heroSection.getBoundingClientRect();
@@ -127,6 +141,9 @@ class AmazonNetflixTransformer {
     
     heroSection.innerHTML = `
       <div class="hero-gradient"></div>
+      <div class="netflix-search">
+        <input type="text" class="search-input" placeholder="Search products..." />
+      </div>
       <div class="hero-content">
         <h1 class="hero-title">
           ${this.truncateTitle(heroProduct.title)}
@@ -153,6 +170,9 @@ class AmazonNetflixTransformer {
     
     // Setup image panning
     this.setupHeroImagePanning(heroSection);
+    
+    // Setup search functionality
+    this.setupSearchBox(heroSection);
     
     // Add loading animation
     setTimeout(() => heroSection.classList.add('loaded'), 100);
