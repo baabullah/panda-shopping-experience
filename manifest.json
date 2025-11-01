@@ -12,5 +12,9 @@
     "js": ["content.js"],
     "css": ["styles.css"],
     "run_at": "document_end"
+  }],
+  "web_accessible_resources": [{
+    "resources": ["wallpaper.jpg"],
+    "matches": ["*://*.amazon.com/*", "*://*.amazon.co.id/*", "*://*.amazon.co.uk/*", "*://*.amazon.de/*", "*://*.amazon.fr/*"]
   }]
 }

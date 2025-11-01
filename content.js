@@ -227,6 +227,9 @@ class AmazonNetflixTransformer {
     const heroSection = document.createElement('div');
     heroSection.className = 'netflix-hero';
     
+    // Set wallpaper background with external URL
+    heroSection.style.background = `url("https://i.ibb.co.com/4g583fLY/wallpaper.jpg") center/cover, linear-gradient(135deg, #141414 0%, #1a1a1a 100%)`;
+    
     const heroImg = this.getHighResImage(heroProduct.image);
     
     heroSection.innerHTML = `
