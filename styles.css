@@ -81,14 +81,15 @@ body:has(.netflix-hero) {
   height: 80vh;
   min-height: 600px;
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
   display: flex;
   align-items: flex-end;
   background-color: #000;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s ease;
+  transition: all 0.8s ease, background-position 0.1s ease;
+  cursor: move;
 }
 
 .netflix-hero.loaded {

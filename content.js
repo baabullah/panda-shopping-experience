@@ -76,6 +76,10 @@ class AmazonNetflixTransformer {
 
     const heroImg = this.getHighResImage(product.image);
     heroSection.style.backgroundImage = `url(${heroImg})`;
+    heroSection.style.backgroundPosition = 'center center';
+    
+    // Re-setup image panning for new image
+    this.setupHeroImagePanning(heroSection);
     
     const titleEl = heroSection.querySelector('.hero-title');
     titleEl.innerHTML = `
@@ -94,6 +98,24 @@ class AmazonNetflixTransformer {
     
     // Scroll to hero
     heroSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  setupHeroImagePanning(heroSection) {
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      
+      // Convert mouse position to background position (0-100%)
+      const bgX = x * 100;
+      const bgY = y * 100;
+      
+      heroSection.style.backgroundPosition = `${bgX}% ${bgY}%`;
+    });
+    
+    heroSection.addEventListener('mouseleave', () => {
+      heroSection.style.backgroundPosition = 'center center';
+    });
   }
 
   createHeroSection(heroProduct) {
@@ -128,6 +150,9 @@ class AmazonNetflixTransformer {
     `;
     
     document.body.insertBefore(heroSection, document.body.firstChild);
+    
+    // Setup image panning
+    this.setupHeroImagePanning(heroSection);
     
     // Add loading animation
     setTimeout(() => heroSection.classList.add('loaded'), 100);
