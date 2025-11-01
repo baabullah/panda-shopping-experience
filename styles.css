@@ -200,12 +200,13 @@ body:has(.netflix-hero) {
 .hero-image-container {
   position: absolute;
   top: 5%;
-  right: 20%;
+  left: 70%;
+  transform: translateX(-50%);
   width: 50%;
   height: 90%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   z-index: 1;
 }
 
@@ -240,7 +241,7 @@ body:has(.netflix-hero) {
 .netflix-search {
   position: absolute;
   top: 40px;
-  right: 40px;
+  left: 40px;
   z-index: 10;
   width: 300px;
 }

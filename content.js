@@ -422,10 +422,10 @@ class AmazonNetflixTransformer {
         <div class="consent-overlay"></div>
         <div class="consent-modal">
           <div class="consent-header">
-            <h2>🎬 Netflix-Style Shopping Experience</h2>
+            <h2>🐼 Panda Shopping Experience</h2>
           </div>
           <div class="consent-content">
-            <p>Welcome! This extension transforms Amazon into a beautiful Netflix-style interface to enhance your shopping experience.</p>
+            <p>Welcome! This extension transforms Amazon into a beautiful cinematic interface to enhance your shopping experience.</p>
             <p><strong>Transparency Notice:</strong> When you purchase products through links in this extension, we may earn a small commission from Amazon at no additional cost to you. Your prices remain exactly the same.</p>
             <p>This helps us maintain and improve the extension. Do you agree to continue?</p>
           </div>
