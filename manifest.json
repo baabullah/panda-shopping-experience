@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Panda Shopping Experience",
-  "version": "2.0",
+  "version": "1.0.0",
   "description": "Transform Amazon product listings into a modern Netflix-style interface with enhanced features",
   "permissions": ["activeTab", "storage"],
   "background": {
