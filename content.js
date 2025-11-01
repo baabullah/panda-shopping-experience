@@ -9,6 +9,11 @@ class AmazonNetflixTransformer {
     this.maxIndex = 0;
   }
 
+  truncateTitle(title, maxLength = 80) {
+    if (!title || title.length <= maxLength) return title;
+    return title.substring(0, maxLength).trim() + '...';
+  }
+
   getHighResImage(thumbnailUrl) {
     if (!thumbnailUrl) return '';
     return thumbnailUrl
@@ -50,6 +55,27 @@ class AmazonNetflixTransformer {
     });
   }
 
+  updateHeroSection(product) {
+    const heroSection = document.querySelector('.netflix-hero');
+    if (!heroSection || !product) return;
+
+    const heroImg = this.getHighResImage(product.image);
+    heroSection.style.backgroundImage = `url(${heroImg})`;
+    
+    heroSection.querySelector('.hero-title').textContent = this.truncateTitle(product.title);
+    
+    const ratingEl = heroSection.querySelector('#hero-rating');
+    const priceEl = heroSection.querySelector('#hero-price');
+    
+    if (ratingEl) ratingEl.textContent = product.rating ? `★ ${product.rating}` : '';
+    if (priceEl) priceEl.textContent = product.price || '';
+    
+    heroSection.querySelector('.hero-btn.primary').onclick = () => window.open(product.link, '_blank');
+    
+    // Scroll to hero
+    heroSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
   createHeroSection(heroProduct) {
     const heroSection = document.createElement('div');
     heroSection.className = 'netflix-hero';
@@ -60,10 +86,10 @@ class AmazonNetflixTransformer {
     heroSection.innerHTML = `
       <div class="hero-gradient"></div>
       <div class="hero-content">
-        <h1 class="hero-title">${heroProduct.title}</h1>
+        <h1 class="hero-title">${this.truncateTitle(heroProduct.title)}</h1>
         <div class="hero-meta">
-          ${heroProduct.rating ? `<span class="hero-rating">★ ${heroProduct.rating}</span>` : ''}
-          ${heroProduct.price ? `<span class="hero-price">${heroProduct.price}</span>` : ''}
+          ${heroProduct.rating ? `<span class="hero-rating" id="hero-rating">★ ${heroProduct.rating}</span>` : '<span class="hero-rating" id="hero-rating"></span>'}
+          ${heroProduct.price ? `<span class="hero-price" id="hero-price">${heroProduct.price}</span>` : '<span class="hero-price" id="hero-price"></span>'}
         </div>
         <p class="hero-description">Featured Product</p>
         <div class="hero-buttons">
@@ -134,10 +160,8 @@ class AmazonNetflixTransformer {
     // Item click events
     carousel.querySelectorAll('.carousel-item').forEach(item => {
       item.onclick = () => {
-        const link = item.dataset.link;
-        if (link && link !== '#') {
-          window.open(link, '_blank');
-        }
+        const index = parseInt(item.dataset.index) + 1; // +1 because hero uses index 0
+        this.updateHeroSection(this.products[index]);
       };
       
       // Hover effects
@@ -213,6 +237,11 @@ class AmazonNetflixTransformer {
 
   async transform() {
     if (this.isTransformed || document.querySelector('.netflix-hero')) return;
+    
+    // Only transform on Amazon search pages
+    if (!window.location.pathname.includes('/s') || !window.location.search.includes('k=')) {
+      return;
+    }
     
     // Check if we're on a search results page
     const productElements = document.querySelectorAll('[data-component-type="s-search-result"]');
