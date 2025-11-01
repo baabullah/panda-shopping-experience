@@ -26,7 +26,67 @@ class AmazonNetflixTransformer {
     const img = product.querySelector('img');
     const price = product.querySelector('.a-price-whole, .a-offscreen');
     const rating = product.querySelector('.a-icon-alt');
-    const link = product.querySelector('h2 a');
+    
+    // Check if this is a sponsored product
+    const isSponsored = product.textContent.includes('Sponsored') || 
+                       product.querySelector('[data-component-type="sp-sponsored-result"]') ||
+                       product.querySelector('.s-label-popover-default');
+    
+    // Get product link - enhanced approach for sponsored products
+    const titleLink = product.querySelector('h2 a');
+    let link = titleLink?.href || '#';
+    
+    // If link is still search page or invalid, try to find actual product link
+    if (link.includes('/s?k=') || link === '#') {
+      // Try multiple selectors for product links
+      const linkSelectors = [
+        'a[href*="/dp/"]',
+        'a[href*="/gp/product/"]',
+        'a[href*="/sspa/click"]', // Sponsored product click tracking
+        'a[href*="/gp/slredirect/"]',
+        '.a-link-normal[href*="/dp/"]',
+        '[data-asin] a[href*="/dp/"]'
+      ];
+      
+      for (const selector of linkSelectors) {
+        const foundLink = product.querySelector(selector);
+        if (foundLink && foundLink.href) {
+          link = foundLink.href;
+          break;
+        }
+      }
+    }
+    
+    // Handle sponsored product links (/sspa/click)
+    if (link.includes('/sspa/click')) {
+      try {
+        const url = new URL(link);
+        const urlParam = url.searchParams.get('url');
+        if (urlParam) {
+          // Decode the URL parameter
+          const decodedUrl = decodeURIComponent(urlParam);
+          // Extract the /dp/ part
+          const dpMatch = decodedUrl.match(/\/dp\/[A-Z0-9]+/);
+          if (dpMatch) {
+            link = window.location.origin + dpMatch[0] + '?tag=baabullah0c-20';
+          }
+        }
+      } catch (e) {
+        console.log('Error parsing sponsored link:', e);
+      }
+    }
+    // Clean the link and add affiliate tag
+    else if (link.includes('/dp/') || link.includes('/gp/product/')) {
+      const url = new URL(link);
+      link = url.origin + url.pathname + '?tag=baabullah0c-20';
+    }
+    
+    console.log('Product extraction:', {
+      isSponsored,
+      title: product.querySelector('h2')?.textContent?.substring(0, 50),
+      originalLink: titleLink?.href,
+      finalLink: link
+    });
     
     // Try multiple selectors for title to get the most detailed one
     const titleSelectors = [
@@ -58,7 +118,10 @@ class AmazonNetflixTransformer {
     const isBestSeller = product.querySelector('.a-badge-label') && 
                         product.textContent.includes('Best Seller');
 
-    // Clean up title
+    // Clean up title - remove sponsored text
+    if (title.includes("Sponsored Ad -")) {
+      title = title.replace(/Sponsored Ad -\s*/, '');
+    }
     if (title.includes("Amazon's Choice:")) {
       title = title.replace(/Amazon's Choice:\s*/, '');
     }
@@ -68,9 +131,10 @@ class AmazonNetflixTransformer {
       title: title,
       price: price?.textContent?.trim() || '',
       rating: rating?.textContent?.match(/[\d.]+/)?.[0] || '',
-      link: link?.href || '#',
+      link: link,
       isAmazonsChoice,
-      isBestSeller
+      isBestSeller,
+      isSponsored
     };
   }
 
@@ -115,7 +179,27 @@ class AmazonNetflixTransformer {
     if (ratingEl) ratingEl.textContent = product.rating ? `★ ${product.rating}` : '';
     if (priceEl) priceEl.textContent = product.price || '';
     
-    heroSection.querySelector('.hero-btn.primary').onclick = () => window.open(product.link, '_blank');
+    const heroBtn = heroSection.querySelector('.hero-btn.primary');
+    if (heroBtn) {
+      // Remove any existing event listeners
+      heroBtn.onclick = null;
+      
+      // Create new handler function
+      const clickHandler = () => {
+        console.log('Button clicked, product link:', product.link);
+        if (product.link && product.link !== '#') {
+          window.open(product.link, '_blank');
+        } else {
+          console.log('Invalid link:', product.link);
+        }
+      };
+      
+      // Assign new handler
+      heroBtn.onclick = clickHandler;
+      console.log('Updated hero button for product:', product.title, 'Link:', product.link);
+    } else {
+      console.log('Hero button not found');
+    }
     
     // Scroll to hero
     heroSection.scrollIntoView({ behavior: 'smooth' });
@@ -177,7 +261,7 @@ class AmazonNetflixTransformer {
         </div>
         <p class="hero-description">Featured Product</p>
         <div class="hero-buttons">
-          <button class="hero-btn primary" onclick="window.open('${heroProduct.link}', '_blank')">
+          <button class="hero-btn primary">
             ▶ View Product
           </button>
           <button class="hero-btn secondary" onclick="this.closest('.netflix-hero').scrollIntoView({behavior: 'smooth', block: 'end'})">
@@ -188,6 +272,16 @@ class AmazonNetflixTransformer {
     `;
     
     document.body.insertBefore(heroSection, document.body.firstChild);
+    
+    // Setup initial hero button onclick
+    const initialHeroBtn = heroSection.querySelector('.hero-btn.primary');
+    if (initialHeroBtn) {
+      initialHeroBtn.onclick = () => {
+        if (heroProduct.link && heroProduct.link !== '#') {
+          window.open(heroProduct.link, '_blank');
+        }
+      };
+    }
     
     // Setup image panning
     this.setupHeroImagePanning(heroSection);
@@ -204,7 +298,7 @@ class AmazonNetflixTransformer {
     carouselSection.className = 'netflix-carousel';
     
     const carouselItems = products.map((product, index) => `
-      <div class="carousel-item" data-index="${index}" data-link="${product.link}">
+      <div class="carousel-item" data-index="${index}">
         <div class="item-image">
           <img src="${product.image}" alt="${product.title}" loading="lazy">
           <div class="item-overlay">
@@ -234,6 +328,9 @@ class AmazonNetflixTransformer {
     document.body.appendChild(carouselSection);
     this.carouselTrack = carouselSection.querySelector('.carousel-track');
     
+    // Store products reference for click events
+    carouselSection.productsArray = products;
+    
     this.setupCarouselEvents(carouselSection);
     this.setupKeyboardNavigation();
     
@@ -250,8 +347,9 @@ class AmazonNetflixTransformer {
     // Item click events
     carousel.querySelectorAll('.carousel-item').forEach(item => {
       item.onclick = () => {
-        const index = parseInt(item.dataset.index) + 1; // +1 because hero uses index 0
-        this.updateHeroSection(this.products[index]);
+        const index = parseInt(item.dataset.index);
+        const selectedProduct = carousel.productsArray[index];
+        this.updateHeroSection(selectedProduct);
       };
       
       // Hover effects
@@ -347,12 +445,19 @@ class AmazonNetflixTransformer {
     
     if (this.products.length === 0) return;
     
-    // Create hero section with first product
-    this.createHeroSection(this.products[0]);
+    // Find first product with valid link for hero
+    const heroProduct = this.products.find(p => p.link !== '#') || this.products[0];
+    const remainingProducts = this.products.filter(p => p !== heroProduct);
+    
+    console.log('Hero product:', heroProduct.title, 'Link:', heroProduct.link);
+    console.log('Remaining products:', remainingProducts.map(p => ({ title: p.title, link: p.link })));
+    
+    // Create hero section with product that has valid link
+    this.createHeroSection(heroProduct);
     
     // Create carousel with remaining products
-    if (this.products.length > 1) {
-      this.createCarousel(this.products.slice(1), 'More Products');
+    if (remainingProducts.length > 0) {
+      this.createCarousel(remainingProducts, 'More Products');
     }
     
     // Set body background only after transformation
