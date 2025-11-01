@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Amazon Netflix Style",
+  "version": "1.0",
+  "description": "Transform Amazon product listings to Netflix-style interface",
+  "permissions": ["activeTab"],
+  "content_scripts": [{
+    "matches": ["*://*.amazon.com/*", "*://*.amazon.co.id/*"],
+    "js": ["content.js"],
+    "css": ["styles.css"]
+  }]
+}

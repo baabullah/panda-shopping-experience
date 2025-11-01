@@ -1,0 +1,148 @@
+/* Hide clutter elements */
+#nav-belt,
+#navFooter,
+.s-refinements,
+.a-pagination,
+#nav-main,
+#nav-search,
+.nav-fill,
+.s-desktop-toolbar,
+.s-result-list-placeholder,
+.s-breadcrumb,
+.puis-sponsored-label-text,
+.AdHolder,
+[data-component-type="sp-sponsored-result"],
+.s-desktop-content .celwidget,
+.s-sorting-options,
+#a-page {
+  display: none !important;
+}
+
+/* Hero theater section */
+.netflix-hero {
+  position: relative;
+  height: 75vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+}
+
+.netflix-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.8) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 40px;
+  color: white;
+  max-width: 50%;
+}
+
+.hero-title {
+  font-size: 3rem !important;
+  font-weight: bold !important;
+  margin-bottom: 20px !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+.hero-description {
+  font-size: 1.2rem !important;
+  margin-bottom: 30px !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+/* Carousel section */
+.netflix-carousel {
+  position: relative;
+  padding: 40px 20px;
+  background: #000;
+}
+
+.carousel-title {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.3s ease;
+  gap: 16px;
+}
+
+.carousel-item {
+  flex: 0 0 200px;
+  background: #141414;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item:hover {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.carousel-item h3 {
+  color: white;
+  font-size: 14px;
+  padding: 12px;
+  margin: 0;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 5;
+}
+
+.carousel-nav:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.carousel-prev {
+  left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+body {
+  background: #000 !important;
+  margin: 0 !important;
+}
+
+.s-result-list {
+  display: none !important;
+}
