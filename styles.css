@@ -188,16 +188,38 @@ body:has(.netflix-hero) {
   position: relative;
   height: 80vh;
   min-height: 600px;
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #141414 0%, #1a1a1a 100%);
   display: flex;
-  align-items: flex-end;
-  background-color: #000;
+  align-items: center;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s ease, background-position 0.1s ease;
-  cursor: move;
+  transition: all 0.8s ease;
+  overflow: hidden;
+}
+
+.hero-image-container {
+  position: absolute;
+  top: 5%;
+  right: 20%;
+  width: 50%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 1;
+}
+
+.hero-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mask: radial-gradient(ellipse at center, black 50%, transparent 90%);
+  -webkit-mask: radial-gradient(ellipse at center, black 50%, transparent 90%);
+}
+
+.netflix-hero::before,
+.netflix-hero::after {
+  display: none;
 }
 
 .netflix-hero.loaded {
@@ -262,10 +284,11 @@ body:has(.netflix-hero) {
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   padding: 60px;
   max-width: 50%;
   animation: slideInLeft 1s ease 0.3s both;
+  align-self: center;
 }
 
 @keyframes slideInLeft {

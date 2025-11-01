@@ -160,11 +160,11 @@ class AmazonNetflixTransformer {
     if (!heroSection || !product) return;
 
     const heroImg = this.getHighResImage(product.image);
-    heroSection.style.backgroundImage = `url(${heroImg})`;
-    heroSection.style.backgroundPosition = 'center center';
-    
-    // Re-setup image panning for new image
-    this.setupHeroImagePanning(heroSection);
+    const imgElement = heroSection.querySelector('.hero-image');
+    if (imgElement) {
+      imgElement.src = heroImg;
+      imgElement.alt = product.title;
+    }
     
     const titleEl = heroSection.querySelector('.hero-title');
     titleEl.innerHTML = `
@@ -220,21 +220,7 @@ class AmazonNetflixTransformer {
   }
 
   setupHeroImagePanning(heroSection) {
-    heroSection.addEventListener('mousemove', (e) => {
-      const rect = heroSection.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      
-      // Convert mouse position to background position (0-100%)
-      const bgX = x * 100;
-      const bgY = y * 100;
-      
-      heroSection.style.backgroundPosition = `${bgX}% ${bgY}%`;
-    });
-    
-    heroSection.addEventListener('mouseleave', () => {
-      heroSection.style.backgroundPosition = 'center center';
-    });
+    // Mouse panning removed - image now shows fully
   }
 
   createHeroSection(heroProduct) {
@@ -242,7 +228,6 @@ class AmazonNetflixTransformer {
     heroSection.className = 'netflix-hero';
     
     const heroImg = this.getHighResImage(heroProduct.image);
-    heroSection.style.backgroundImage = `url(${heroImg})`;
     
     heroSection.innerHTML = `
       <div class="hero-gradient"></div>
@@ -268,6 +253,9 @@ class AmazonNetflixTransformer {
             ⓘ More Info
           </button>
         </div>
+      </div>
+      <div class="hero-image-container">
+        <img src="${heroImg}" alt="${heroProduct.title}" class="hero-image">
       </div>
     `;
     
