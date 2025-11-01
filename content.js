@@ -24,10 +24,32 @@ class AmazonNetflixTransformer {
 
   extractProductInfo(product) {
     const img = product.querySelector('img');
-    const title = product.querySelector('h2 a span, h2 span, .a-size-base-plus, .a-size-medium');
     const price = product.querySelector('.a-price-whole, .a-offscreen');
     const rating = product.querySelector('.a-icon-alt');
     const link = product.querySelector('h2 a');
+    
+    // Try multiple selectors for title to get the most detailed one
+    const titleSelectors = [
+      'h2 a span[aria-label]',
+      'h2 a span',
+      'h2 span',
+      '.a-size-base-plus',
+      '.a-size-medium',
+      '.a-text-normal',
+      '[data-cy="title-recipe-label"] + span',
+      'h2 a'
+    ];
+    
+    let title = 'Product';
+    for (const selector of titleSelectors) {
+      const titleEl = product.querySelector(selector);
+      if (titleEl) {
+        const titleText = titleEl.getAttribute('aria-label') || titleEl.textContent?.trim();
+        if (titleText && titleText.length > title.length && !titleText.includes("Amazon's Choice")) {
+          title = titleText;
+        }
+      }
+    }
     
     // Check for badges
     const isAmazonsChoice = product.querySelector('[data-cy="title-recipe-label"]') || 
@@ -36,15 +58,14 @@ class AmazonNetflixTransformer {
     const isBestSeller = product.querySelector('.a-badge-label') && 
                         product.textContent.includes('Best Seller');
 
-    // Get actual product title, not the badge text
-    let productTitle = title?.textContent?.trim() || 'Product';
-    if (productTitle.includes("Amazon's Choice:")) {
-      productTitle = productTitle.replace(/Amazon's Choice:\s*/, '');
+    // Clean up title
+    if (title.includes("Amazon's Choice:")) {
+      title = title.replace(/Amazon's Choice:\s*/, '');
     }
 
     return {
       image: img?.src || '',
-      title: productTitle,
+      title: title,
       price: price?.textContent?.trim() || '',
       rating: rating?.textContent?.match(/[\d.]+/)?.[0] || '',
       link: link?.href || '#',
