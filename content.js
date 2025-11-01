@@ -1,111 +1,273 @@
-// Transform Amazon to Netflix-style layout
-let isTransformed = false;
+// Amazon Netflix Style Extension v2.0
+class AmazonNetflixTransformer {
+  constructor() {
+    this.isTransformed = false;
+    this.currentIndex = 0;
+    this.products = [];
+    this.carouselTrack = null;
+    this.itemsPerView = 6;
+    this.maxIndex = 0;
+  }
 
-function transformLayout() {
-  if (isTransformed) return;
-  
-  // Hide unnecessary elements
-  const elementsToHide = [
-    '#nav-belt',
-    '#navFooter',
-    '.s-refinements',
-    '.a-pagination',
-    '#nav-main',
-    '#nav-search',
-    '.nav-fill',
-    '.s-desktop-toolbar',
-    '.s-result-list-placeholder',
-    '.s-breadcrumb',
-    '.puis-sponsored-label-text',
-    '.AdHolder',
-    '[data-component-type="sp-sponsored-result"]',
-    '.s-desktop-content .celwidget',
-    '.s-sorting-options',
-    '#a-page'
-  ];
-  
-  elementsToHide.forEach(selector => {
-    const element = document.querySelector(selector);
-    if (element) element.style.display = 'none';
-  });
+  getHighResImage(thumbnailUrl) {
+    if (!thumbnailUrl) return '';
+    return thumbnailUrl
+      .replace(/_AC_[A-Z]{2}\d+_/, '_AC_SL1500_')
+      .replace(/_SX\d+_/, '_SX800_')
+      .replace(/_SY\d+_/, '_SY800_');
+  }
 
-  const products = document.querySelectorAll('[data-component-type="s-search-result"]');
-  if (products.length === 0) return;
+  extractProductInfo(product) {
+    const img = product.querySelector('img');
+    const title = product.querySelector('h2 a span, h2 span, .a-size-base-plus, .a-size-medium');
+    const price = product.querySelector('.a-price-whole, .a-offscreen');
+    const rating = product.querySelector('.a-icon-alt');
+    const link = product.querySelector('h2 a');
 
-  // Create hero section with first product
-  const firstProduct = products[0];
-  const heroImg = firstProduct.querySelector('img');
-  const heroTitle = firstProduct.querySelector('h2');
-  
-  if (heroImg && heroTitle) {
+    return {
+      image: img?.src || '',
+      title: title?.textContent?.trim() || 'Product',
+      price: price?.textContent?.trim() || '',
+      rating: rating?.textContent?.match(/[\d.]+/)?.[0] || '',
+      link: link?.href || '#'
+    };
+  }
+
+  hideClutterElements() {
+    const selectors = [
+      '#nav-belt', '#navFooter', '.s-refinements', '.a-pagination',
+      '#nav-main', '#nav-search', '.nav-fill', '.s-desktop-toolbar',
+      '.s-result-list-placeholder', '.s-breadcrumb', '.puis-sponsored-label-text',
+      '.AdHolder', '[data-component-type="sp-sponsored-result"]',
+      '.s-desktop-content .celwidget', '.s-sorting-options', '#a-page',
+      '.s-desktop-content', '.s-main-slot', '.s-result-list'
+    ];
+    
+    selectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.style.display = 'none';
+      });
+    });
+  }
+
+  createHeroSection(heroProduct) {
     const heroSection = document.createElement('div');
     heroSection.className = 'netflix-hero';
-    heroSection.style.backgroundImage = `url(${heroImg.src})`;
+    
+    const heroImg = this.getHighResImage(heroProduct.image);
+    heroSection.style.backgroundImage = `url(${heroImg})`;
     
     heroSection.innerHTML = `
+      <div class="hero-gradient"></div>
       <div class="hero-content">
-        <h1 class="hero-title">${heroTitle.textContent}</h1>
+        <h1 class="hero-title">${heroProduct.title}</h1>
+        <div class="hero-meta">
+          ${heroProduct.rating ? `<span class="hero-rating">★ ${heroProduct.rating}</span>` : ''}
+          ${heroProduct.price ? `<span class="hero-price">${heroProduct.price}</span>` : ''}
+        </div>
         <p class="hero-description">Featured Product</p>
+        <div class="hero-buttons">
+          <button class="hero-btn primary" onclick="window.open('${heroProduct.link}', '_blank')">
+            ▶ View Product
+          </button>
+          <button class="hero-btn secondary" onclick="this.closest('.netflix-hero').scrollIntoView({behavior: 'smooth', block: 'end'})">
+            ⓘ More Info
+          </button>
+        </div>
       </div>
     `;
     
     document.body.insertBefore(heroSection, document.body.firstChild);
+    
+    // Add loading animation
+    setTimeout(() => heroSection.classList.add('loaded'), 100);
   }
 
-  // Create carousel for remaining products
-  const carouselSection = document.createElement('div');
-  carouselSection.className = 'netflix-carousel';
-  
-  const carouselItems = Array.from(products).slice(1, 11).map(product => {
-    const img = product.querySelector('img');
-    const title = product.querySelector('h2');
+  createCarousel(products, title = 'More Products') {
+    const carouselSection = document.createElement('div');
+    carouselSection.className = 'netflix-carousel';
     
-    return `
-      <div class="carousel-item">
-        <img src="${img?.src || ''}" alt="">
-        <h3>${title?.textContent || ''}</h3>
+    const carouselItems = products.map((product, index) => `
+      <div class="carousel-item" data-index="${index}" data-link="${product.link}">
+        <div class="item-image">
+          <img src="${product.image}" alt="${product.title}" loading="lazy">
+          <div class="item-overlay">
+            <div class="item-info">
+              <h4>${product.title}</h4>
+              ${product.rating ? `<div class="item-rating">★ ${product.rating}</div>` : ''}
+              ${product.price ? `<div class="item-price">${product.price}</div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    this.maxIndex = Math.max(0, products.length - this.itemsPerView);
+
+    carouselSection.innerHTML = `
+      <h2 class="carousel-title">${title}</h2>
+      <div class="carousel-container">
+        <button class="carousel-nav carousel-prev" ${this.currentIndex === 0 ? 'disabled' : ''}>‹</button>
+        <div class="carousel-viewport">
+          <div class="carousel-track">${carouselItems}</div>
+        </div>
+        <button class="carousel-nav carousel-next" ${this.currentIndex >= this.maxIndex ? 'disabled' : ''}>›</button>
       </div>
     `;
-  }).join('');
 
-  carouselSection.innerHTML = `
-    <h2 class="carousel-title">More Products</h2>
-    <div class="carousel-container">
-      <button class="carousel-nav carousel-prev">‹</button>
-      <div class="carousel-track">${carouselItems}</div>
-      <button class="carousel-nav carousel-next">›</button>
-    </div>
-  `;
+    document.body.appendChild(carouselSection);
+    this.carouselTrack = carouselSection.querySelector('.carousel-track');
+    
+    this.setupCarouselEvents(carouselSection);
+    this.setupKeyboardNavigation();
+    
+    return carouselSection;
+  }
 
-  document.body.appendChild(carouselSection);
+  setupCarouselEvents(carousel) {
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+    
+    prevBtn.onclick = () => this.moveCarousel(-1);
+    nextBtn.onclick = () => this.moveCarousel(1);
+    
+    // Item click events
+    carousel.querySelectorAll('.carousel-item').forEach(item => {
+      item.onclick = () => {
+        const link = item.dataset.link;
+        if (link && link !== '#') {
+          window.open(link, '_blank');
+        }
+      };
+      
+      // Hover effects
+      item.onmouseenter = () => {
+        item.style.transform = 'scale(1.05) translateY(-10px)';
+      };
+      
+      item.onmouseleave = () => {
+        item.style.transform = 'scale(1) translateY(0)';
+      };
+    });
+  }
 
-  // Carousel navigation
-  let currentIndex = 0;
-  const track = carouselSection.querySelector('.carousel-track');
-  const prevBtn = carouselSection.querySelector('.carousel-prev');
-  const nextBtn = carouselSection.querySelector('.carousel-next');
-  
-  prevBtn.onclick = () => {
-    currentIndex = Math.max(0, currentIndex - 1);
-    track.style.transform = `translateX(-${currentIndex * 216}px)`;
-  };
-  
-  nextBtn.onclick = () => {
-    const maxIndex = Math.max(0, track.children.length - 5);
-    currentIndex = Math.min(maxIndex, currentIndex + 1);
-    track.style.transform = `translateX(-${currentIndex * 216}px)`;
-  };
+  moveCarousel(direction) {
+    this.currentIndex = Math.max(0, Math.min(this.maxIndex, this.currentIndex + direction));
+    
+    if (this.carouselTrack) {
+      const itemWidth = 220; // 200px + 20px gap
+      this.carouselTrack.style.transform = `translateX(-${this.currentIndex * itemWidth}px)`;
+    }
+    
+    // Update button states
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    
+    if (prevBtn) prevBtn.disabled = this.currentIndex === 0;
+    if (nextBtn) nextBtn.disabled = this.currentIndex >= this.maxIndex;
+  }
 
-  // Hide original results
-  const resultsList = document.querySelector('.s-result-list');
-  if (resultsList) resultsList.style.display = 'none';
-  
-  isTransformed = true;
+  setupKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          this.moveCarousel(-1);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          this.moveCarousel(1);
+          break;
+        case 'Home':
+          e.preventDefault();
+          this.currentIndex = 0;
+          this.moveCarousel(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          this.currentIndex = this.maxIndex;
+          this.moveCarousel(0);
+          break;
+      }
+    });
+  }
+
+  addLoadingIndicator() {
+    const loader = document.createElement('div');
+    loader.className = 'netflix-loader';
+    loader.innerHTML = `
+      <div class="loader-content">
+        <div class="loader-spinner"></div>
+        <p>Transforming to Netflix style...</p>
+      </div>
+    `;
+    document.body.appendChild(loader);
+    
+    setTimeout(() => {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 500);
+    }, 1000);
+  }
+
+  async transform() {
+    if (this.isTransformed || document.querySelector('.netflix-hero')) return;
+    
+    // Check if we're on a search results page
+    const productElements = document.querySelectorAll('[data-component-type="s-search-result"]');
+    if (productElements.length === 0) return;
+
+    this.addLoadingIndicator();
+    this.hideClutterElements();
+    
+    // Extract product information
+    this.products = Array.from(productElements)
+      .map(el => this.extractProductInfo(el))
+      .filter(product => product.image && product.title);
+    
+    if (this.products.length === 0) return;
+    
+    // Create hero section with first product
+    this.createHeroSection(this.products[0]);
+    
+    // Create carousel with remaining products
+    if (this.products.length > 1) {
+      this.createCarousel(this.products.slice(1), 'More Products');
+    }
+    
+    // Set body background
+    document.body.style.background = '#141414';
+    document.body.style.margin = '0';
+    document.body.style.fontFamily = 'Netflix Sans, Helvetica, Arial, sans-serif';
+    
+    this.isTransformed = true;
+  }
 }
 
-// Run transformation when page loads
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', transformLayout);
-} else {
-  setTimeout(transformLayout, 1000);
+// Initialize transformer
+const transformer = new AmazonNetflixTransformer();
+
+// Execute transformation
+function initTransform() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => transformer.transform(), 500);
+    });
+  } else {
+    setTimeout(() => transformer.transform(), 500);
+  }
 }
+
+// Handle dynamic content loading
+let lastUrl = location.href;
+new MutationObserver(() => {
+  const url = location.href;
+  if (url !== lastUrl) {
+    lastUrl = url;
+    transformer.isTransformed = false;
+    setTimeout(() => transformer.transform(), 1000);
+  }
+}).observe(document, { subtree: true, childList: true });
+
+initTransform();

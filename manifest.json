@@ -1,12 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Amazon Netflix Style",
-  "version": "1.0",
-  "description": "Transform Amazon product listings to Netflix-style interface",
+  "version": "2.0",
+  "description": "Transform Amazon product listings into a modern Netflix-style interface with enhanced features",
   "permissions": ["activeTab"],
   "content_scripts": [{
-    "matches": ["*://*.amazon.com/*", "*://*.amazon.co.id/*"],
+    "matches": ["*://*.amazon.com/*", "*://*.amazon.co.id/*", "*://*.amazon.co.uk/*", "*://*.amazon.de/*", "*://*.amazon.fr/*"],
     "js": ["content.js"],
-    "css": ["styles.css"]
-  }]
+    "css": ["styles.css"],
+    "run_at": "document_end"
+  }],
+  "icons": {
+    "16": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSIjRTUwOTE0Ii8+CjxwYXRoIGQ9Ik0zIDRIMTNWMTJIM1Y0WiIgZmlsbD0iIzAwMCIvPgo8L3N2Zz4K",
+    "48": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjRTUwOTE0Ii8+CjxwYXRoIGQ9Ik05IDEySDM5VjM2SDlWMTJaIiBmaWxsPSIjMDAwIi8+CjwvdXZnPgo=",
+    "128": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRTUwOTE0Ii8+CjxwYXRoIGQ9Ik0yNCAzMkgxMDRWOTZIMjRWMzJaIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo="
+  }
 }
