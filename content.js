@@ -423,8 +423,59 @@ class AmazonNetflixTransformer {
     }, 1000);
   }
 
+  showConsentPopup() {
+    return new Promise((resolve) => {
+      const popup = document.createElement('div');
+      popup.className = 'netflix-consent-popup';
+      popup.innerHTML = `
+        <div class="consent-overlay"></div>
+        <div class="consent-modal">
+          <div class="consent-header">
+            <h2>🎬 Netflix-Style Shopping Experience</h2>
+          </div>
+          <div class="consent-content">
+            <p>Welcome! This extension transforms Amazon into a beautiful Netflix-style interface to enhance your shopping experience.</p>
+            <p><strong>Transparency Notice:</strong> When you purchase products through links in this extension, we may earn a small commission from Amazon at no additional cost to you. Your prices remain exactly the same.</p>
+            <p>This helps us maintain and improve the extension. Do you agree to continue?</p>
+          </div>
+          <div class="consent-buttons">
+            <button class="consent-btn decline">No, Thanks</button>
+            <button class="consent-btn accept">Yes, I Agree</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(popup);
+      
+      popup.querySelector('.accept').onclick = () => {
+        localStorage.setItem('netflix-extension-consent', 'true');
+        popup.remove();
+        resolve(true);
+      };
+      
+      popup.querySelector('.decline').onclick = () => {
+        popup.remove();
+        resolve(false);
+      };
+    });
+  }
+
+  async checkConsent() {
+    const consent = localStorage.getItem('netflix-extension-consent');
+    if (consent === 'true') {
+      return true;
+    }
+    return await this.showConsentPopup();
+  }
+
   async transform() {
     if (this.isTransformed || document.querySelector('.netflix-hero')) return;
+    
+    // Check consent first
+    const hasConsent = await this.checkConsent();
+    if (!hasConsent) {
+      return; // Exit if user doesn't consent
+    }
     
     // Only transform on Amazon search pages
     if (!window.location.pathname.includes('/s') || !window.location.search.includes('k=')) {

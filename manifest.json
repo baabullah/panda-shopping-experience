@@ -3,7 +3,10 @@
   "name": "Amazon Netflix Style",
   "version": "2.0",
   "description": "Transform Amazon product listings into a modern Netflix-style interface with enhanced features",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [{
     "matches": ["*://*.amazon.com/*", "*://*.amazon.co.id/*", "*://*.amazon.co.uk/*", "*://*.amazon.de/*", "*://*.amazon.fr/*"],
     "js": ["content.js"],
