@@ -1,12 +1,25 @@
 /* Amazon Netflix Style Extension v2.0 */
 
-/* Hide Amazon clutter */
-#nav-belt, #navFooter, .s-refinements, .a-pagination,
-#nav-main, #nav-search, .nav-fill, .s-desktop-toolbar,
-.s-result-list-placeholder, .s-breadcrumb, .puis-sponsored-label-text,
-.AdHolder, [data-component-type="sp-sponsored-result"],
-.s-desktop-content .celwidget, .s-sorting-options, #a-page,
-.s-desktop-content, .s-main-slot, .s-result-list {
+/* Hide Amazon clutter - only when Netflix theme is active */
+body:has(.netflix-hero) #nav-belt,
+body:has(.netflix-hero) #navFooter,
+body:has(.netflix-hero) .s-refinements,
+body:has(.netflix-hero) .a-pagination,
+body:has(.netflix-hero) #nav-main,
+body:has(.netflix-hero) #nav-search,
+body:has(.netflix-hero) .nav-fill,
+body:has(.netflix-hero) .s-desktop-toolbar,
+body:has(.netflix-hero) .s-result-list-placeholder,
+body:has(.netflix-hero) .s-breadcrumb,
+body:has(.netflix-hero) .puis-sponsored-label-text,
+body:has(.netflix-hero) .AdHolder,
+body:has(.netflix-hero) [data-component-type="sp-sponsored-result"],
+body:has(.netflix-hero) .s-desktop-content .celwidget,
+body:has(.netflix-hero) .s-sorting-options,
+body:has(.netflix-hero) #a-page,
+body:has(.netflix-hero) .s-desktop-content,
+body:has(.netflix-hero) .s-main-slot,
+body:has(.netflix-hero) .s-result-list {
   display: none !important;
 }
 
