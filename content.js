@@ -265,7 +265,7 @@ class AmazonNetflixTransformer {
       this.createCarousel(this.products.slice(1), 'More Products');
     }
     
-    // Set body background
+    // Set body background only after transformation
     document.body.style.background = '#141414';
     document.body.style.margin = '0';
     document.body.style.fontFamily = 'Netflix Sans, Helvetica, Arial, sans-serif';

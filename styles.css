@@ -10,12 +10,16 @@
   display: none !important;
 }
 
-/* Global styles */
-body {
-  background: #141414 !important;
-  margin: 0 !important;
+/* Global styles - only applied when Netflix theme is active */
+.netflix-hero ~ * {
   font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
   color: #fff !important;
+}
+
+.netflix-hero ~ body,
+body:has(.netflix-hero) {
+  background: #141414 !important;
+  margin: 0 !important;
   overflow-x: hidden !important;
 }
 
