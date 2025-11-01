@@ -28,13 +28,28 @@ class AmazonNetflixTransformer {
     const price = product.querySelector('.a-price-whole, .a-offscreen');
     const rating = product.querySelector('.a-icon-alt');
     const link = product.querySelector('h2 a');
+    
+    // Check for badges
+    const isAmazonsChoice = product.querySelector('[data-cy="title-recipe-label"]') || 
+                           product.querySelector('.s-label-popover-default') ||
+                           product.textContent.includes("Amazon's Choice");
+    const isBestSeller = product.querySelector('.a-badge-label') && 
+                        product.textContent.includes('Best Seller');
+
+    // Get actual product title, not the badge text
+    let productTitle = title?.textContent?.trim() || 'Product';
+    if (productTitle.includes("Amazon's Choice:")) {
+      productTitle = productTitle.replace(/Amazon's Choice:\s*/, '');
+    }
 
     return {
       image: img?.src || '',
-      title: title?.textContent?.trim() || 'Product',
+      title: productTitle,
       price: price?.textContent?.trim() || '',
       rating: rating?.textContent?.match(/[\d.]+/)?.[0] || '',
-      link: link?.href || '#'
+      link: link?.href || '#',
+      isAmazonsChoice,
+      isBestSeller
     };
   }
 
@@ -62,7 +77,12 @@ class AmazonNetflixTransformer {
     const heroImg = this.getHighResImage(product.image);
     heroSection.style.backgroundImage = `url(${heroImg})`;
     
-    heroSection.querySelector('.hero-title').textContent = this.truncateTitle(product.title);
+    const titleEl = heroSection.querySelector('.hero-title');
+    titleEl.innerHTML = `
+      ${this.truncateTitle(product.title)}
+      ${product.isAmazonsChoice ? '<span class="hero-badge choice">⭐ Amazon\'s Choice</span>' : ''}
+      ${product.isBestSeller ? '<span class="hero-badge bestseller">🏆 Best Seller</span>' : ''}
+    `;
     
     const ratingEl = heroSection.querySelector('#hero-rating');
     const priceEl = heroSection.querySelector('#hero-price');
@@ -86,7 +106,11 @@ class AmazonNetflixTransformer {
     heroSection.innerHTML = `
       <div class="hero-gradient"></div>
       <div class="hero-content">
-        <h1 class="hero-title">${this.truncateTitle(heroProduct.title)}</h1>
+        <h1 class="hero-title">
+          ${this.truncateTitle(heroProduct.title)}
+          ${heroProduct.isAmazonsChoice ? '<span class="hero-badge choice">⭐ Amazon\'s Choice</span>' : ''}
+          ${heroProduct.isBestSeller ? '<span class="hero-badge bestseller">🏆 Best Seller</span>' : ''}
+        </h1>
         <div class="hero-meta">
           ${heroProduct.rating ? `<span class="hero-rating" id="hero-rating">★ ${heroProduct.rating}</span>` : '<span class="hero-rating" id="hero-rating"></span>'}
           ${heroProduct.price ? `<span class="hero-price" id="hero-price">${heroProduct.price}</span>` : '<span class="hero-price" id="hero-price"></span>'}

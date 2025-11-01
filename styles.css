@@ -136,6 +136,26 @@ body:has(.netflix-hero) {
   }
 }
 
+.hero-badge {
+  display: inline-block;
+  font-size: 0.6em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.hero-badge.choice {
+  background: #ff9900;
+  color: #000;
+}
+
+.hero-badge.bestseller {
+  background: #e47911;
+  color: #fff;
+}
+
 .hero-title {
   font-size: clamp(2rem, 5vw, 4rem) !important;
   font-weight: 700 !important;
