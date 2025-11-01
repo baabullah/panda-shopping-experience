@@ -1,0 +1,138 @@
+PRIVACY POLICY FOR PANDA SHOPPING EXPERIENCE
+Last Updated: November 1, 2025
+
+1. INTRODUCTION
+
+Panda Shopping Experience ("we", "our", or "the extension") is committed to protecting your privacy. This privacy policy explains how we handle information when you use our Chrome extension.
+
+2. INFORMATION WE COLLECT
+
+2.1 User Consent Preference
+- We store a single boolean value in your browser's local storage indicating whether you have consented to our affiliate program
+- Storage key: "netflix-extension-consent" with value "true" or "false"
+- This is the ONLY data we store
+
+2.2 Information We DO NOT Collect
+- We do NOT collect any personal information
+- We do NOT track your browsing history
+- We do NOT collect your Amazon account information
+- We do NOT collect your purchase history
+- We do NOT collect your search queries
+- We do NOT use cookies or tracking pixels
+- We do NOT send any data to external servers
+
+3. HOW WE USE INFORMATION
+
+The stored consent preference is used solely to:
+- Remember your choice about participating in our affiliate program
+- Prevent showing the consent popup on every page visit
+- Provide a better user experience
+
+4. AFFILIATE PROGRAM DISCLOSURE
+
+4.1 Affiliate Links
+- When you consent, product links are modified to include our Amazon affiliate tag (tag=baabullah0c-20)
+- We may earn a small commission when you make a purchase through these links
+- Your prices remain exactly the same - there is NO additional cost to you
+- You can decline consent at any time by clearing your browser's local storage
+
+4.2 Transparency
+- We clearly disclose our affiliate relationship before you consent
+- The consent popup explains how affiliate links work
+- You have full control over whether to participate
+
+5. DATA STORAGE
+
+- All data is stored locally in your browser using Chrome's localStorage API
+- No data is transmitted to our servers or any third-party servers
+- Data remains on your device and is never shared
+
+6. PERMISSIONS EXPLAINED
+
+6.1 activeTab Permission
+- Used to transform Amazon product pages into our cinematic interface
+- Only activates when you visit Amazon search result pages
+- Does not access content from other websites
+
+6.2 storage Permission
+- Used exclusively to store your consent preference
+- No other data is stored or accessed
+
+6.3 Host Permissions (Amazon domains)
+- Required to detect and transform Amazon search pages
+- Only works on Amazon.com, Amazon.co.uk, Amazon.de, Amazon.fr, and Amazon.co.id
+- Does not access any other websites
+
+7. THIRD-PARTY SERVICES
+
+7.1 Amazon
+- The extension modifies Amazon's product listing pages
+- Product information (titles, images, prices) is read from Amazon's pages
+- We add affiliate tags to product links with your consent
+- We are not affiliated with, endorsed by, or sponsored by Amazon.com, Inc.
+
+7.2 External Resources
+- The extension loads a wallpaper image from i.ibb.co.com for visual enhancement
+- No tracking or data collection occurs through this resource
+
+8. DATA SECURITY
+
+- Since we don't collect or transmit data, there is minimal security risk
+- Your consent preference is stored securely in your browser's local storage
+- Only you and the extension have access to this stored preference
+
+9. CHILDREN'S PRIVACY
+
+The extension does not knowingly collect information from children under 13. The extension is designed for general shopping purposes and does not target children.
+
+10. CHANGES TO THIS POLICY
+
+We may update this privacy policy from time to time. Changes will be reflected in the "Last Updated" date. Continued use of the extension after changes constitutes acceptance of the updated policy.
+
+11. YOUR RIGHTS
+
+You have the right to:
+- Decline consent to the affiliate program
+- Clear your consent preference at any time by clearing browser data
+- Uninstall the extension at any time
+- Contact us with privacy concerns
+
+12. DATA RETENTION
+
+- Your consent preference is stored indefinitely until you clear your browser data or uninstall the extension
+- No other data is retained
+
+13. CONTACT INFORMATION
+
+For privacy-related questions or concerns:
+- GitHub: https://github.com/baabullah/panda-shopping-experience
+- Email: baabullah@gmail.com
+
+14. COMPLIANCE
+
+This extension complies with:
+- Chrome Web Store Developer Program Policies
+- General Data Protection Regulation (GDPR) principles
+- California Consumer Privacy Act (CCPA) principles
+
+15. DISCLAIMER
+
+This extension is an independent project and is not affiliated with, endorsed by, or sponsored by:
+- Amazon.com, Inc. or any of its affiliates
+- Netflix, Inc.
+- Google LLC or Chrome
+
+---
+
+SUMMARY
+
+In plain English:
+- We only store whether you agreed to our affiliate program (yes/no)
+- We don't collect any personal information
+- We don't track you
+- We don't send data anywhere
+- We may earn a commission if you buy through our links (with your consent)
+- Your prices stay the same
+- You can opt out anytime
+
+That's it. Simple and transparent.
